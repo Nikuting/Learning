@@ -1,0 +1,32 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+'将用户输入的日期时间字符串转换为timestamp格式'
+
+__author__ = 'Daxia'
+
+import  re
+from datetime import datetime, timedelta, timezone
+
+def to_timestamp(dt_str, tz_str):
+    #将字符转化为datetime格式(UTC-8时区）
+    ndt = datetime.strptime(dt_str,'%Y-%m-%d %H:%M:%S')
+    #利用正则表达式提取输入时间的时区
+    u = re.match(r'^(\w{3})([\+|\-])([0-2]?)([0-9])(:00)', tz_str)
+    #判断时区的正负号
+    if u.group(2) == '-':
+        nu = int(u.group(4)) * (-1)
+    else:
+        nu = int(u.group(4))
+    #设置输入时间的正确时区
+    ndt2 = ndt.replace(tzinfo=timezone(timedelta(hours=nu)))
+    return ndt2.timestamp()
+
+# 测试:
+t1 = to_timestamp('2015-6-1 08:10:30', 'UTC+7:00')
+assert t1 == 1433121030.0,t1
+
+t2 = to_timestamp('2015-5-31 16:10:30', 'UTC-09:00')
+assert t2 == 1433121030.0, t2
+
+print('OK')
