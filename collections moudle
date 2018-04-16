@@ -23,4 +23,14 @@ deque(['y', 'a', 'b', 'c', 'x'])
 >>> dd['key2'] # key2不存在，返回默认值
 'N/A'
 
-4.OrderedDict:
+4.OrderedDict:key按照插入的顺序排列
+
+5.Counter：简单的计数器
+例：统计字符出现个数
+>>> from collections import Counter
+>>> c = Counter()
+>>> for ch in 'programming':
+...     c[ch] = c[ch] + 1
+...
+>>> c
+Counter({'g': 2, 'm': 2, 'r': 2, 'a': 1, 'i': 1, 'o': 1, 'n': 1, 'p': 1})
