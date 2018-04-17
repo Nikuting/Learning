@@ -1,0 +1,36 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+'计算圆周率'
+
+__author__ = 'Daxia'
+
+import  itertools
+from math import  pow
+def pi(n):
+    #step1：创建一个奇数序列
+    j1 = itertools.count(1, 2)
+    #step2: 取该序列的前n项
+    j2 = itertools.takewhile(lambda  x: x <= (2*n - 1), j1)
+    #step3:添加正负号并用4除，并求和
+    '''
+    #利用列表生成器和更简洁的if-else语句来简化后面几步：
+    j3 = list(j2)
+    return sum([4/ j3[i] if i % 2 == 0 else -4 / j3[i] for i in range(n)])
+    '''
+    num, sum = 0,0
+    for i in j2:
+        sum = sum + (pow(-1, num) * 4) / i
+        num += 1
+    return sum
+
+# 测试:
+print(pi(10))
+print(pi(100))
+print(pi(1000))
+print(pi(10000))
+assert 3.04 < pi(10) < 3.05
+assert 3.13 < pi(100) < 3.14
+assert 3.140 < pi(1000) < 3.141
+assert 3.1414 < pi(10000) < 3.1415
+print('ok')
