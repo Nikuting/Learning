@@ -1,0 +1,57 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+'SMTP服务器发送邮件'
+
+__author__ = 'Daxia'
+
+import smtplib
+
+from email import  encoders
+from email.header import Header
+from email.utils import parseaddr, formataddr
+from email.mime.text import  MIMEText
+
+#对邮件文本主题，发件人，收件人整理
+def _format_addr(s):
+    name, addr = parseaddr(s)
+    return formataddr((Header(name, 'utf-8').encode(), addr))
+
+'''
+注意到构造MIMEText对象时，第一个参数就是邮件正文
+第二个参数是MIME的subtype，传入'plain'表示纯文本
+最终的MIME就是'text/plain'，最后一定要用utf-8编码保证多语言兼容性
+'''
+msg = MIMEText('hello, send by python...', 'plain', 'utf-8')
+#输入自己的Email地址和口令：
+from_addr = input('From:')
+password = input('Password:')
+#输入收件人地址：
+to_addr = input('To:')
+#输入SMTP服务器地址：
+smtp_server = input('SMTP server:')
+
+'''
+msg是一个MIMEText类，有以下属性：
+['From'] --->发件人
+['To']     ---->收件人
+['Subject']---->主题
+'''
+msg['From'] = _format_addr('Python爱好者 <%s>' % from_addr)
+msg['To'] = _format_addr('管理员 <%s>' % to_addr)
+msg['Subject'] = Header('来自SMTP的问候……', 'utf-8').encode()
+print(msg['From'], msg['To'], msg['Subject'])
+
+server = smtplib.SMTP_SSL(smtp_server, 465)   # SMTP协议默认端口是25
+#打印出和SMTP服务器交互的所有信息
+server.set_debuglevel(1)
+#模拟自己的Email登陆：
+server.login(from_addr, password)
+#发送邮件文本
+server.sendmail(from_addr, [to_addr], msg.as_string())
+'''
+sendmail()方法就是发邮件，由于可以一次发给多个人，
+所以传入一个list，邮件正文是一个str，
+as_string()把MIMEText对象变成str
+'''
+server.quit()
