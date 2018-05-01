@@ -1,0 +1,47 @@
+#python3将urllib2和urllib整合成为了一个urllib库
+#而urllib3则是另一个第三方库
+
+urllib.request
+1.urlopen()
+response = urllib.request.urlopen(url, data=None, [timeout, ]*, cafile=None, capath=None, cadefault=False, context=None) 
+# url 要打开的网址，可以是字符串或者是request对象
+# data 要发送给服务器的数据（POST方法）
+# timeout 网站的访问超时时间，单位为s
+# cafile和capath 用于HTTPS请求中，设置CA证书及其路径
+返回对象提供的方法:
+read() , readline() ,readlines() , fileno() , close() ：对HTTPResponse类型数据进行操作
+info()：返回HTTPMessage对象，表示远程服务器返回的头信息
+getcode()：返回Http状态码。如果是http请求，200请求成功完成;404网址未找到
+geturl()：返回请求的url
+
+2.Request():使用该方法来返回一个request对象
+request = urllib.request.Request(url, data=None, headers={}, origin_req_host=None, unverifiable=False, method=None)
+# url 包含网址的字符串
+# data 要发送给服务器的数据对象，对于POST请求，要通过urllib.parse.urlencode() 方法进行编码
+# header 头部信息，必须为字典类型
+# header可以直接传入，或是用add_header(key,val)来添加
+# method 请求方法，如果data为None则为GET，否则为POST
+
+3.ProxyHandler():设置代理IP
+
+
+
+
+urllib.parse
+1.urlparse():解析url，并获取参数
+url = r'https://docs.python.org/3.5/search.html?q=parse&check_keywords=yes&area=default'
+parseResult = parse.urlparse(url)
+ParseResult(scheme='https', netloc='docs.python.org', path='/3.5/search.html', params='',
+	query='q=parse&check_keywords=yes&area=default', fragment='')
+
+2.parse_qs():将url参数分解为dict
+parse_qs('proxy=183.222.102.178:8080&task=XXXXX|5-3+2')
+{'proxy': ['183.222.102.178:8080'], 'task': ['XXXXX|5-3 2']}
+
+3.urlencode()
+query = {
+	'name': 'walker',
+  'age': 99,
+  }
+parse.urlencode(query)
+'name=walker&age=99'
