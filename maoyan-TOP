@@ -1,0 +1,39 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+import  requests
+import re
+import json
+
+def get_one_page(url):
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.92 Safari/537.36',
+        'Host': 'maoyan.com'
+    }
+    response = requests.get(url, headers=headers)
+    return response
+
+def page_match(url):
+    page_html = get_one_page(url)
+    ma = re.compile('<dd>.*?index.*?>(.*?)</i>.*?data-src="(.*?)".*?title="(.*?)".*?s'
+                    'tar">\s*(.*?)\s*?</p>.*?time">(.*?)</p>.*?integer">([0-9]\.)</i>.*?'
+                    'fraction">([0-9])</i>.*?</dd>', re.S)
+    results = re.findall(ma, page_html.text)
+    for result in results:
+        yield {
+            'index':result[0],
+            'img': result[1],
+            'title':result[2],
+            'star': result[3][3:] if len(result[3]) > 3 else "无" ,
+            'releasetime': result[4][5:] if len(result[4]) > 5 else '无',
+            'score': result[5] + result[6]
+        }
+
+url = 'http://maoyan.com/board/4?offset='
+for i in range(10):
+    new_url = url + str(i * 10)
+    for item in page_match(new_url):
+        with open('maoyan_top.txt', 'a', encoding='utf-8') as f:
+            f.write(json.dumps(item,ensure_ascii=False) + '\n')
+    print('page %d is OK!' % i)
+    print(new_url)
